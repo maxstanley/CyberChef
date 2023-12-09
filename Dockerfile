@@ -15,12 +15,12 @@ COPY . .
 
 RUN npx grunt prod
 
-RUN unzip build/prod/*.zip
+RUN unzip build/prod/*.zip && \
+    # Remove the build analyzer report in this stage to reduce final image size.
+    rm build/prod/BundleAnalyzerReport.html
 
 FROM nginx:1.25-alpine3.18 AS cyberchef
 
 WORKDIR /usr/share/nginx/html/
 
 COPY --from=cyberchef-build /usr/src/app/build/prod/ .
-
-RUN rm BundleAnalyzerReport.html
